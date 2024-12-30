@@ -1,16 +1,44 @@
 <template>
-	<div></div>
+	<div class="flex items-centre flex-col flex-1">
+    <!-- Banner -->
+        <div v-if="route.query.preview" class="text-white text-center p-4 w-full bg-weather-secondary">
+            <p>You are currently previewing this city, click the "+" icon to start tracking this City</p>
+        </div>
+    <!-- Weather Oveview -->
+    <div class="flex flex-col items-center py-12 text-white">
+        <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
+        <p class="text-sm mb-12">
+            {{ new Date(weatherData.currentTime).toLocaleDateString(
+                "en-us",
+                {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "long"
+                }
+            )
+            }}
+            {{ new Date(weatherData.currentTime).toLocaleDateString(
+                "en-us",
+                {
+                    timeStyle: "short",
+                }
+            )
+            }}
+        </p>
+    </div>
+    </div>
 </template>
 
 <script setup>
 import axios from "axios";
 import { useRoute } from "vue-router";
 
+const Appid = "VUE_APP_ENV_ID"
 const route = useRoute();
 const getWeatherData = async () => {
 	try {
 		const weatherData = await axios.get(
-			`https://api.openweathermap.org/data/2.5/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=ef6ad191b597ca3b2ea40c5a737f098f&units=imperial`
+			`https://api.openweathermap.org/data/2.5/onecall?lat=${route.query.lat}&lon=${route.query.lng}&exclude={part}&appid=Appid&units=imperial`
 		);
 		// cal current date & time
 		const localOffset = new Date().getTimezoneOffset() * 60000;
