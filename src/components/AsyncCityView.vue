@@ -1,39 +1,111 @@
 <template>
 	<div class="flex items-centre flex-col flex-1">
-    <!-- Banner -->
-        <div v-if="route.query.preview" class="text-white text-center p-4 w-full bg-weather-secondary">
-            <p>You are currently previewing this city, click the "+" icon to start tracking this City</p>
-        </div>
-    <!-- Weather Oveview -->
-    <div class="flex flex-col items-center py-12 text-white">
-        <h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
-        <p class="text-sm mb-12">
-            {{ new Date(weatherData.currentTime).toLocaleDateString(
-                "en-us",
-                {
-                    weekday: "short",
-                    day: "2-digit",
-                    month: "long"
-                }
-            )
-            }}
-            {{ new Date(weatherData.currentTime).toLocaleDateString(
-                "en-us",
-                {
-                    timeStyle: "short",
-                }
-            )
-            }}
-        </p>
-    </div>
-    </div>
+		<!-- Banner -->
+		<div
+			v-if="route.query.preview"
+			class="text-white text-center p-4 w-full bg-weather-secondary"
+		>
+			<p>
+				You are currently previewing this city, click the "+" icon to start
+				tracking this City
+			</p>
+		</div>
+		<!-- Weather Overview -->
+		<div class="flex flex-col items-center py-12 text-white">
+			<h1 class="text-4xl mb-2">{{ route.params.city }}</h1>
+			<p class="text-sm mb-12">
+				{{
+					new Date(weatherData.currentTime).toLocaleDateString("en-us", {
+						weekday: "short",
+						day: "2-digit",
+						month: "long",
+					})
+				}}
+				{{
+					new Date(weatherData.currentTime).toLocaleTimeString("en-us", {
+						timeStyle: "short",
+					})
+				}}
+			</p>
+			<p class="text-xl mb-8">{{ Math.round(weatherData.current.temp) }}&deg</p>
+
+			<p>Feels like {{ Math.round(weatherData.current.feels_like) }}&deg</p>
+			<p class="capitalize">
+				{{ weatherData.current.weather[0].description }}
+			</p>
+			<img
+				class="w-[150px] h-auto"
+				:src="`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`"
+				alt=""
+			/>
+		</div>
+
+		<hr class="w-full border border-opacity-10 border-white" />
+		<!-- Hourly Overview -->
+		<div class="max-w-screen-md w-full py-12">
+			<div class="mx-8 text-white">
+				<h2 class="mb-4">Hourly weather</h2>
+				<div class="flex gap-10 overflow-scroll">
+					<div
+						v-for="hourData in weatherData.hourly"
+						:key="hourData.dt"
+						class="flex flex-col gap-4 items-center"
+					>
+						<p class="whitespace-nowrap text-md">
+							{{
+								new Date(hourData.currentTime).toLocaleTimeString("en-us", {
+									hour: "numeric",
+								})
+							}}
+						</p>
+						<img
+							class="w-auto h-[50px] object-cover"
+							:src="`http://openweathermap.org/img/wn/${hourData.weather[0].icon}@2x.png`"
+							alt=""
+						/>
+						<p class="text-xl">{{ Math.round(hourData.temp) }}&deg</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr class="w-full border border-opacity-10 border-white" />
+		<!-- Weekly Overview -->
+		<div class="w-full py-12 max-w-screen-md">
+			<div class="mx-8 text-white">
+				<h2 class="mb-4">Day forecast</h2>
+				<div
+					v-for="day in weatherData.daily"
+					:key="day.dt"
+					class="items-center"
+				>
+					<p class="flex-1">
+						{{
+							new Date(day.dt * 1000).toLocaleDateString("en-us", {
+								weekday: "long",
+							})
+						}}
+					</p>
+					<img
+						class="w-[50px] h-[50px] object-cover"
+						:src="`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`"
+						alt=""
+					/>
+                    <div class="flex gap-2 justify-end flex-1">
+                        <p>H: {{ Math.round(day.temp.max) }}</p>
+                        <p>L: {{ Math.round(day.temp.min) }}</p>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
 import axios from "axios";
 import { useRoute } from "vue-router";
 
-const Appid = "VUE_APP_ENV_ID"
+const Appid = "VUE_APP_ENV_ID";
 const route = useRoute();
 const getWeatherData = async () => {
 	try {
@@ -52,7 +124,7 @@ const getWeatherData = async () => {
 			hour.currentTime = utc + 1000 * weatherData.data.timezone_offset;
 		});
 
-		return weatherData;
+		return weatherData.data;
 	} catch (err) {
 		console.log(err);
 	}
