@@ -44,7 +44,7 @@ import { ref } from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
 import CityList from "../components/CityList.vue";
-impot CityCardSkeleton from "../components/CityCardSkeleton.vue";
+import CityCardSkeleton from "../components/CityCardSkeleton.vue";
 
 
 const router = useRouter();

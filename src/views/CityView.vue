@@ -11,5 +11,5 @@
 
 <script setup>
 import AsyncCityView from "../components/AsyncCityView.vue";
-import CityViewSkeleton from "../components/CityViewSkeleton";
+import CityViewSkeleton from "../components/CityViewSkeleton.vue";
 </script>
